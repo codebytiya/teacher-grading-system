@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HOD - Grade Review</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #FF9800;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            color: #333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #333;
+            color: white;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .btn-approve {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .btn-reject {
+            background: #f44336;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-approve:hover {
+            background: #45a049;
+        }
+        .btn-reject:hover {
+            background: #d32f2f;
+        }
+        a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            background: rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        .success {
+            background: #4CAF50;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .error {
+            background: #f44336;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Grade Review - Head of Department</h1>
+        <p>Review grades submitted by lecturers</p>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="{% if message.tags == 'success' %}success{% else %}error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form method="POST">
+            {% csrf_token %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Course</th>
+                        <th>Assessment</th>
+                        <th>Score</th>
+                        <th>Letter Grade</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for grade in grades %}
+                    <tr>
+                        <td>{{ grade.studentid.firstname }} {{ grade.studentid.lastname }}</td>
+                        <td>{{ grade.assessmentid.courseid.coursecode }}</td>
+                        <td>{{ grade.assessmentid.assessmentname }}</td>
+                        <td>{{ grade.score }}</td>
+                        <td>{{ grade.lettergrade|default:"-" }}</td>
+                        <td>
+                            <button type="submit" name="approve" value="{{ grade.gradeid }}" class="btn-approve">✓ Approve</button>
+                            <button type="submit" name="reject" value="{{ grade.gradeid }}" class="btn-reject">✗ Reject</button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align: center;">No grades pending review</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+        
+        <br>
+        <a href="{% url 'hod_dashboard' %}">← Back to Dashboard</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+</body>
+</html>

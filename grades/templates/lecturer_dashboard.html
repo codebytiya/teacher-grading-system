@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lecturer Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #2196F3;
+            color: white;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        .info {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        a {
+            color: white;
+            text-decoration: none;
+            background: rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 10px;
+        }
+        a:hover {
+            background: rgba(0,0,0,0.5);
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, {{ lecturer.firstname }} {{ lecturer.lastname }}!</h1>
+        <p>Lecturer Dashboard</p>
+        
+        <div class="info">
+            <h3>Your Information</h3>
+            <p><strong>Email:</strong> {{ lecturer.email }}</p>
+            <p><strong>Department ID:</strong> {{ lecturer.departmentid }}</p>
+            <p><strong>Phone:</strong> {{ lecturer.phone }}</p>
+        </div>
+        
+        <div class="info">
+            <h3>Quick Actions</h3>
+            <div class="btn-group">
+                <a href="{% url 'lecturer_enter_grades' %}">📝 Enter Grades</a>
+                <a href="{% url 'lecturer_view_grades' %}">📊 View My Grades</a>
+            </div>
+        </div>
+        
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+</body>
+</html>

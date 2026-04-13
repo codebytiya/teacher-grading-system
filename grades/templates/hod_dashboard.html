@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HOD Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #FF9800;
+            color: white;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        .info {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        a {
+            color: white;
+            text-decoration: none;
+            background: rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 10px;
+        }
+        a:hover {
+            background: rgba(0,0,0,0.5);
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, {{ user.username }}!</h1>
+        <p>Head of Department Dashboard</p>
+        
+        <div class="info">
+            <h3>📊 Grade Management</h3>
+            <div class="btn-group">
+                <a href="{% url 'hod_grades' %}">📋 Review Pending Grades</a>
+            </div>
+        </div>
+        
+        <div class="info">
+            <h3>👨‍🏫 Information</h3>
+            <div class="btn-group">
+                <a href="{% url 'hod_dashboard' %}">📊 Dashboard Home</a>
+            </div>
+        </div>
+        
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+</body>
+</html>
