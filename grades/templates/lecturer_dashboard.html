@@ -1,74 +1,312 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Lecturer Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecturer Dashboard | Teacher Grading System</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
-            padding: 20px;
-            background: #2196F3;
-            color: white;
-            text-align: center;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container {
-            max-width: 600px;
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f0f4f8;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        /* main container */
+        .dashboard-container {
+            max-width: 1280px;
             margin: 0 auto;
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 10px;
+            padding: 2rem 1.5rem;
         }
-        h1 {
-            margin-bottom: 10px;
+
+        /* header card */
+        .header-card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            padding: 1.8rem 2rem;
+            border: 1px solid #e2edf2;
         }
-        .info {
-            background: rgba(0,0,0,0.2);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            text-align: left;
+
+        .header-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
-        a {
-            color: white;
-            text-decoration: none;
-            background: rgba(0,0,0,0.3);
-            padding: 10px 20px;
-            border-radius: 5px;
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #1e4a76, #2c7da0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .role-badge {
+            background: #eef2ff;
+            color: #1e4a76;
+            padding: 0.3rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* lecturer info card */
+        .info-card {
+            background: white;
+            border-radius: 1.5rem;
+            border: 1px solid #e2edf2;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.2s;
+        }
+
+        .info-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0f3b5c;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #2c7da0;
             display: inline-block;
-            margin: 10px;
         }
-        a:hover {
-            background: rgba(0,0,0,0.5);
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
         }
-        .btn-group {
+
+        .info-item {
+            background: #f8fafc;
+            padding: 0.8rem 1rem;
+            border-radius: 1rem;
+            border-left: 4px solid #2c7da0;
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #5b6e8c;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #0f3b5c;
+            word-break: break-word;
+        }
+
+        /* courses assigned */
+        .courses-card {
+            background: white;
+            border-radius: 1.5rem;
+            border: 1px solid #e2edf2;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .courses-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0f3b5c;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .course-list {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .course-card {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1rem 1.2rem;
+            flex: 1 1 260px;
+            border: 1px solid #e2edf2;
+            transition: 0.2s;
+        }
+
+        .course-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-color: #bdd3e6;
+        }
+
+        .course-code {
+            font-weight: 700;
+            color: #1e4a76;
+            font-size: 1rem;
+        }
+
+        .course-name {
+            font-size: 0.9rem;
+            color: #2c5a7a;
+            margin-top: 0.25rem;
+        }
+
+        /* action buttons */
+        .actions-card {
+            background: white;
+            border-radius: 1.5rem;
+            border: 1px solid #e2edf2;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.6rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #2c7da0;
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #1e5a78;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #2c7da0;
+            color: #2c7da0;
+        }
+
+        .btn-outline:hover {
+            background: #eef2ff;
+        }
+
+        .logout-btn {
+            text-align: right;
+            margin-top: 1rem;
+        }
+
+        .logout-link {
+            background: #f1f5f9;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            color: #4a627a;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .logout-link:hover {
+            background: #e2e8f0;
+        }
+
+        @media (max-width: 700px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+            .header-card, .info-card, .courses-card, .actions-card {
+                padding: 1.2rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome, {{ lecturer.firstname }} {{ lecturer.lastname }}!</h1>
-        <p>Lecturer Dashboard</p>
-        
-        <div class="info">
-            <h3>Your Information</h3>
-            <p><strong>Email:</strong> {{ lecturer.email }}</p>
-            <p><strong>Department ID:</strong> {{ lecturer.departmentid }}</p>
-            <p><strong>Phone:</strong> {{ lecturer.phone }}</p>
+<div class="dashboard-container">
+    <!-- Header -->
+    <div class="header-card">
+        <div class="header-title">
+            <h1>📚 Lecturer Dashboard</h1>
+            <div class="role-badge">Lecturer Portal</div>
         </div>
-        
-        <div class="info">
-            <h3>Quick Actions</h3>
-            <div class="btn-group">
-                <a href="{% url 'lecturer_enter_grades' %}">📝 Enter Grades</a>
-                <a href="{% url 'lecturer_view_grades' %}">📊 View My Grades</a>
+        <p style="color: #4a627a; margin-top: 0.3rem;">Manage your courses, enter grades, and track submissions.</p>
+    </div>
+
+    <!-- Lecturer Information -->
+    <div class="info-card">
+        <div class="info-title">👤 Your Information</div>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Full name</div>
+                <div class="info-value">{{ lecturer.firstname }} {{ lecturer.lastname }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Email address</div>
+                <div class="info-value">{{ lecturer.email }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Department ID</div>
+                <div class="info-value">{{ lecturer.departmentid }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Phone</div>
+                <div class="info-value">{{ lecturer.phone|default:"Not provided" }}</div>
             </div>
         </div>
-        
-        <a href="{% url 'logout' %}">Logout</a>
     </div>
+
+    <!-- Assigned Courses -->
+    <div class="courses-card">
+        <div class="courses-title">
+            📖 My Assigned Courses
+        </div>
+        {% if assigned_courses %}
+            <div class="course-list">
+                {% for assignment in assigned_courses %}
+                    <div class="course-card">
+                        <div class="course-code">{{ assignment.courseid.coursecode }}</div>
+                        <div class="course-name">{{ assignment.courseid.coursename }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="color: #7b8ea0;">No courses assigned yet. Please contact the HOD.</p>
+        {% endif %}
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions-card">
+        <div class="courses-title">⚡ Quick Actions</div>
+        <div class="action-buttons">
+            <a href="{% url 'lecturer_enter_grades' %}" class="btn btn-primary">📝 Enter Grades</a>
+            <a href="{% url 'lecturer_view_grades' %}" class="btn btn-outline">📊 View My Grades</a>
+        </div>
+    </div>
+
+    <!-- Logout -->
+    <div class="logout-btn">
+        <a href="{% url 'logout' %}" class="logout-link">🚪 Sign out</a>
+    </div>
+</div>
 </body>
 </html>
