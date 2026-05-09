@@ -30,6 +30,7 @@ class Department(models.Model):
 # ========== STUDENT ==========
 class Student(models.Model):
     studentid = models.AutoField(db_column='StudentID', primary_key=True)
+    studentnumber = models.CharField(db_column='StudentNumber', max_length=20, unique=True, blank=True, null=True)
     firstname = models.CharField(db_column='FirstName', max_length=50)
     lastname = models.CharField(db_column='LastName', max_length=50)
     email = models.CharField(db_column='Email', unique=True, max_length=100)
@@ -38,8 +39,18 @@ class Student(models.Model):
     departmentid = models.IntegerField(db_column='DepartmentID')
     phone = models.CharField(db_column='Phone', max_length=20)
 
+    def save(self, *args, **kwargs):
+        if not self.studentnumber and self.lastname:
+            prefix = ''.join(ch for ch in self.lastname.lower() if ch.isalpha())[:2] or 'st'
+            next_number = Student.objects.count() + 1
+            self.studentnumber = f'{prefix}{next_number:04d}'
+            while Student.objects.filter(studentnumber__iexact=self.studentnumber).exclude(studentid=self.studentid).exists():
+                next_number += 1
+                self.studentnumber = f'{prefix}{next_number:04d}'
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.firstname} {self.lastname}"
+        return f"{self.studentnumber or self.studentid} - {self.firstname} {self.lastname}"
 
     class Meta:
         db_table = 'student'
@@ -51,7 +62,7 @@ class Course(models.Model):
     coursename = models.CharField(db_column='CourseName', max_length=100)
     credits = models.IntegerField(db_column='Credits')
     departmentid = models.IntegerField(db_column='DepartmentID')
-    description = models.TextField(db_column='Description')
+    description = models.CharField(db_column='Description', max_length=100)
 
     def __str__(self):
         return f"{self.coursecode} - {self.coursename}"
@@ -64,7 +75,7 @@ class Lecture(models.Model):
     lecturerid = models.AutoField(db_column='LecturerID', primary_key=True)
     firstname = models.CharField(db_column='FirstName', max_length=50)
     lastname = models.CharField(db_column='LastName', max_length=50)
-    email = models.CharField(db_column='Email', unique=True, max_length=100)
+    email = models.CharField(db_column='Email', max_length=100)
     departmentid = models.IntegerField(db_column='DepartmentID')
     phone = models.CharField(db_column='Phone', max_length=20, blank=True, null=True)
 
@@ -118,6 +129,15 @@ class Grade(models.Model):
     flagged_by = models.CharField(max_length=50, blank=True, null=True)
     flagged_value = models.FloatField(blank=True, null=True)
     class_average = models.FloatField(blank=True, null=True)
+    hod_comment = models.TextField(blank=True, null=True)
+    # New status field for workflow
+    status = models.CharField(max_length=20, default='draft', choices=[
+        ('draft', 'Draft'),
+        ('submitted', 'Submitted'),
+        ('approved', 'Approved by HOD'),
+        ('rejected', 'Rejected by HOD'),
+        ('final', 'Final Approved'),
+    ])
 
     def __str__(self):
         return f"{self.studentid.firstname} {self.studentid.lastname} - {self.assessmentid.assessmentname}: {self.score}"
@@ -131,6 +151,8 @@ class CourseAssignment(models.Model):
     courseid = models.ForeignKey(Course, models.DO_NOTHING, db_column='CourseID')
     lecturerid = models.ForeignKey(Lecture, models.DO_NOTHING, db_column='LecturerID')
     semesterid = models.IntegerField(db_column='SemesterID')
+    portal_is_open = models.BooleanField(default=True)
+    portal_updated_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.courseid.coursecode} - {self.lecturerid.firstname} {self.lecturerid.lastname}"
@@ -156,7 +178,7 @@ class Profile(models.Model):
     class Meta:
         db_table = 'user_profile'
 
-# ========== SIGNALS TO AUTO-CREATE PROFILE ==========
+# ========== SIGNALS ==========
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -165,3 +187,4 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+    

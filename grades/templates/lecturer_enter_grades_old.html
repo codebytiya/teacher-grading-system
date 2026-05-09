@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Grades – Lecturer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f0f9f0;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        /* Header card */
+        .header-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-left: 6px solid #2e7d32;
+        }
+        .header-card h1 {
+            color: #1b5e20;
+            font-size: 1.8rem;
+        }
+        .lecturer-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            color: #2e3b2e;
+        }
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid #d0e8d0;
+        }
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1b5e20;
+            margin-bottom: 1rem;
+            border-left: 4px solid #2e7d32;
+            padding-left: 0.8rem;
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        label {
+            font-weight: 600;
+            color: #2e5c2e;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        select, input {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #c8e6c9;
+            border-radius: 12px;
+            background: white;
+            font-size: 0.95rem;
+        }
+        select:focus, input:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 2px rgba(46,125,50,0.2);
+        }
+        .student-search {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+        .student-info-card {
+            background: #e8f5e9;
+            border-radius: 16px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.8rem;
+        }
+        .info-item {
+            background: white;
+            padding: 0.5rem 0.8rem;
+            border-radius: 12px;
+        }
+        .grade-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        .grade-table th, .grade-table td {
+            border: 1px solid #c8e6c9;
+            padding: 0.8rem;
+            text-align: center;
+        }
+        .grade-table th {
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+        .grade-table input {
+            width: 90px;
+            text-align: center;
+        }
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-primary {
+            background: #2e7d32;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #1b5e20;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .warning {
+            background: #fff8e1;
+            border-left: 4px solid #ffb300;
+            padding: 0.8rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            display: none;
+        }
+        .class-avg {
+            background: #e8f5e9;
+            padding: 0.5rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            .grade-table input { width: 70px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header-card">
+        <h1>📝 Enter Student Grades</h1>
+        <div class="lecturer-info">
+            <span><strong>{{ lecturer.firstname }} {{ lecturer.lastname }}</strong> | {{ lecturer.email }} | Dept: {{ lecturer.departmentid }}</span>
+        </div>
+    </div>
+
+    <!-- Course selection -->
+    <div class="card">
+        <div class="card-title">📚 Select Course</div>
+        <div class="form-group">
+            <select id="courseSelect">
+                <option value="">-- Choose a course --</option>
+                {% for assignment in assigned_courses %}
+                <option value="{{ assignment.courseid.courseid }}">{{ assignment.courseid.coursecode }} – {{ assignment.courseid.coursename }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Student Search & Grade Entry -->
+    <div id="dynamicArea" style="display: none;">
+        <div class="card">
+            <div class="card-title">🔍 Find Student</div>
+            <div class="student-search">
+                <div class="form-group" style="flex:2">
+                    <label>Student ID or Name</label>
+                    <input type="text" id="studentSearch" placeholder="Start typing...">
+                    <div id="suggestions" style="background:white; border:1px solid #c8e6c9; border-radius:12px; max-height:200px; overflow-y:auto; display:none;"></div>
+                </div>
+            </div>
+            <div id="studentInfoDisplay" class="student-info-card" style="display:none;">
+                <div class="info-grid">
+                    <div class="info-item"><strong>ID:</strong> <span id="infoId">-</span></div>
+                    <div class="info-item"><strong>Name:</strong> <span id="infoName">-</span></div>
+                    <div class="info-item"><strong>Email:</strong> <span id="infoEmail">-</span></div>
+                    <div class="info-item"><strong>Department:</strong> <span id="infoDept">-</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grade Table -->
+        <div class="card">
+            <div class="card-title">📊 Grade Entry</div>
+            <div id="classAverageDisplay" class="class-avg">Class average: --</div>
+            <table class="grade-table">
+                <thead>
+                    <tr><th>Component</th><th>Score (0‑100)</th><th>Weight</th><th>Weighted</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Assignment</td><td><input type="number" id="assignmentScore" step="0.01" min="0" max="100"></td><td>20%</td><td id="w_assign">0.00</td></tr>
+                    <tr><td>Quiz</td><td><input type="number" id="quizScore" step="0.01" min="0" max="100"></td><td>20%</td><td id="w_quiz">0.00</td></tr>
+                    <tr><td>Mid‑semester exam</td><td><input type="number" id="midtermScore" step="0.01" min="0" max="100"></td><td>30%</td><td id="w_mid">0.00</td></tr>
+                    <tr><td>End‑semester exam</td><td><input type="number" id="finalScore" step="0.01" min="0" max="100"></td><td>30%</td><td id="w_final">0.00</td></tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="3"><strong>Final Score</strong></td><td id="totalScore">0.00</td></tr>
+                    <tr><td colspan="3"><strong>Letter Grade</strong></td><td id="letterGrade">-</td></tr>
+                </tfoot>
+            </table>
+            <div id="aiWarning" class="warning"></div>
+            <div style="text-align: right; margin-top: 1rem;">
+                <button class="btn btn-primary" id="submitBtn">Submit Grades & Logout</button>
+                <button class="btn btn-secondary" onclick="window.location.href='{% url 'lecturer_dashboard' %}'">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function getCookie(name) {
+        let value = "; " + document.cookie;
+        let parts = value.split("; " + name + "=");
+        if (parts.length === 2) return parts.pop().split(";").shift();
+    }
+
+    let selectedStudent = null;
+    let currentCourseId = null;
+    let classAverage = 0;
+
+    const courseSelect = document.getElementById('courseSelect');
+    const dynamicArea = document.getElementById('dynamicArea');
+    const studentSearch = document.getElementById('studentSearch');
+    const suggestionsDiv = document.getElementById('suggestions');
+    const studentInfoDisplay = document.getElementById('studentInfoDisplay');
+    const classAvgSpan = document.getElementById('classAverageDisplay');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // When course changes, reset everything
+    courseSelect.addEventListener('change', async function() {
+        currentCourseId = this.value;
+        if (!currentCourseId) {
+            dynamicArea.style.display = 'none';
+            return;
+        }
+        dynamicArea.style.display = 'block';
+        // Fetch class average for this course (using a generic assessment – you can adapt)
+        const avgResponse = await fetch(`/api/class-average/?course_id=${currentCourseId}`);
+        const avgData = await avgResponse.json();
+        classAverage = avgData.average || 0;
+        classAvgSpan.innerText = `Class average: ${classAverage.toFixed(1)}%`;
+        // Reset student selection
+        selectedStudent = null;
+        studentInfoDisplay.style.display = 'none';
+        studentSearch.value = '';
+        // Reset grade inputs
+        document.getElementById('assignmentScore').value = '';
+        document.getElementById('quizScore').value = '';
+        document.getElementById('midtermScore').value = '';
+        document.getElementById('finalScore').value = '';
+        computeGrade();
+    });
+
+    // Student search (you'll need an API to list students – we'll use a simple fetch on input)
+    let studentList = [];
+    studentSearch.addEventListener('input', async function() {
+        const query = this.value.toLowerCase();
+        if (query.length < 2) {
+            suggestionsDiv.style.display = 'none';
+            return;
+        }
+        // Fetch students enrolled in this course (we can reuse the course-students API)
+        if (!currentCourseId) return;
+        const response = await fetch(`/api/course-students/${currentCourseId}/`);
+        const data = await response.json();
+        studentList = data.students || [];
+        const matches = studentList.filter(s => 
+            s.studentid.toString().includes(query) || 
+            (s.firstname+' '+s.lastname).toLowerCase().includes(query)
+        );
+        if (matches.length) {
+            suggestionsDiv.innerHTML = matches.map(s => 
+                `<div onclick="selectStudent(${s.studentid})" style="padding:8px; cursor:pointer; border-bottom:1px solid #c8e6c9;">${s.studentid} – ${s.firstname} ${s.lastname}</div>`
+            ).join('');
+            suggestionsDiv.style.display = 'block';
+        } else {
+            suggestionsDiv.style.display = 'none';
+        }
+    });
+
+    async function selectStudent(id) {
+        // Fetch student details (maybe you have an API; if not, use the local list)
+        const student = studentList.find(s => s.studentid == id);
+        if (student) {
+            document.getElementById('infoId').innerText = student.studentid;
+            document.getElementById('infoName').innerText = `${student.firstname} ${student.lastname}`;
+            document.getElementById('infoEmail').innerText = student.email;
+            document.getElementById('infoDept').innerText = student.department || '-';
+            studentInfoDisplay.style.display = 'block';
+            selectedStudent = student;
+            studentSearch.value = '';
+            suggestionsDiv.style.display = 'none';
+        } else {
+            // Fallback: fetch directly
+            const resp = await fetch(`/api/student/${id}/`);
+            const data = await resp.json();
+            if (!data.error) {
+                document.getElementById('infoId').innerText = data.studentid;
+                document.getElementById('infoName').innerText = `${data.firstname} ${data.lastname}`;
+                document.getElementById('infoEmail').innerText = data.email;
+                document.getElementById('infoDept').innerText = data.department;
+                studentInfoDisplay.style.display = 'block';
+                selectedStudent = data;
+            }
+        }
+    }
+
+    function computeGrade() {
+        let a = parseFloat(document.getElementById('assignmentScore').value) || 0;
+        let q = parseFloat(document.getElementById('quizScore').value) || 0;
+        let m = parseFloat(document.getElementById('midtermScore').value) || 0;
+        let f = parseFloat(document.getElementById('finalScore').value) || 0;
+        let wa = a*0.20, wq = q*0.20, wm = m*0.30, wf = f*0.30;
+        document.getElementById('w_assign').innerText = wa.toFixed(2);
+        document.getElementById('w_quiz').innerText = wq.toFixed(2);
+        document.getElementById('w_mid').innerText = wm.toFixed(2);
+        document.getElementById('w_final').innerText = wf.toFixed(2);
+        let total = wa + wq + wm + wf;
+        document.getElementById('totalScore').innerText = total.toFixed(2);
+        let letter = '';
+        if (total >= 90) letter = 'A';
+        else if (total >= 85) letter = 'A-';
+        else if (total >= 80) letter = 'B+';
+        else if (total >= 75) letter = 'B';
+        else if (total >= 70) letter = 'B-';
+        else if (total >= 65) letter = 'C+';
+        else if (total >= 60) letter = 'C';
+        else if (total >= 55) letter = 'C-';
+        else if (total >= 50) letter = 'D';
+        else letter = 'F';
+        document.getElementById('letterGrade').innerText = letter;
+        return total;
+    }
+
+    document.getElementById('assignmentScore').addEventListener('input', computeGrade);
+    document.getElementById('quizScore').addEventListener('input', computeGrade);
+    document.getElementById('midtermScore').addEventListener('input', computeGrade);
+    document.getElementById('finalScore').addEventListener('input', computeGrade);
+
+    submitBtn.addEventListener('click', async function() {
+        if (!selectedStudent) {
+            alert('Please select a student first.');
+            return;
+        }
+        const assignment = document.getElementById('assignmentScore').value;
+        const quiz = document.getElementById('quizScore').value;
+        const midterm = document.getElementById('midtermScore').value;
+        const final = document.getElementById('finalScore').value;
+        const payload = {
+            course_id: currentCourseId,
+            student_id: selectedStudent.studentid,
+            assignment: assignment || 0,
+            quiz: quiz || 0,
+            midterm: midterm || 0,
+            final: final || 0,
+        };
+        const response = await fetch('/lecturer/submit-grade/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+            body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (result.success) {
+            alert('Grade submitted! You will be logged out.');
+            window.location.href = '/logout/';
+        } else {
+            alert('Error: ' + result.error);
+            if (result.flagged) {
+                const warn = document.getElementById('aiWarning');
+                warn.innerHTML = `⚠️ Grade flagged because it deviates from class average (${result.class_average?.toFixed(1)}%). HOD will review.`;
+                warn.style.display = 'block';
+            }
+        }
+    });
+</script>
+</body>
+</html>

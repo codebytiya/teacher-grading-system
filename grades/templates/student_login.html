@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Your Grades</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; font-family: 'Google Sans', Arial, Helvetica, sans-serif; background: #eef2f5; display: grid; place-items: center; color: #24313f; }
+        .login-box { width: min(430px, calc(100% - 32px)); background: #fff; border: 1px solid #d9e1e8; border-radius: 8px; box-shadow: 0 18px 40px rgba(34,45,57,.12); padding: 26px; }
+        h1 { margin: 0 0 8px; text-align: center; font-size: 26px; }
+        p { margin: 0 0 22px; text-align: center; color: #65717e; }
+        label { display: block; font-size: 13px; font-weight: 800; margin-bottom: 7px; }
+        input { width: 100%; min-height: 42px; border: 1px solid #bdc7d0; border-radius: 6px; padding: 10px; margin-bottom: 14px; }
+        button { width: 100%; min-height: 42px; border: 0; border-radius: 6px; background: #1f6f8b; color: white; font-weight: 800; cursor: pointer; }
+        .error { margin-top: 14px; background: #ffe7e7; color: #8a1e1e; border: 1px solid #efb5b5; border-radius: 6px; padding: 10px; text-align: center; }
+        a { display: block; margin-top: 18px; color: #1f6f8b; text-align: center; font-weight: 800; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>View Your Grades</h1>
+        <p>Student results portal</p>
+        <form method="POST">
+            {% csrf_token %}
+            <label for="username">Student username</label>
+            <input id="username" type="text" name="username" required autofocus>
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password" required>
+            <button type="submit">Open results</button>
+        </form>
+        {% if error %}<div class="error">{{ error }}</div>{% endif %}
+        <a href="{% url 'login' %}">Staff login</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,197 @@
+/* Custom Green & White Admin Theme */
+:root {
+    --primary-green: #2d7a2d;
+    --light-green: #4caf50;
+    --pale-green: #e8f5e8;
+    --dark-green: #1b5e20;
+    --white: #ffffff;
+    --light-gray: #f5f5f5;
+    --border-gray: #e0e0e0;
+}
+
+body {
+    background: linear-gradient(135deg, var(--pale-green) 0%, var(--white) 100%);
+}
+
+#header {
+    background: var(--primary-green) !important;
+    border-bottom: 3px solid var(--dark-green);
+}
+
+#header a {
+    color: var(--white) !important;
+}
+
+#branding h1, #branding h1 a:link, #branding h1 a:visited {
+    color: var(--white) !important;
+}
+
+.module h2, .module caption, .inline-group h2 {
+    background: var(--light-green) !important;
+    color: var(--white) !important;
+}
+
+.divider {
+    border-color: var(--border-gray);
+}
+
+.button, input[type=submit], input[type=button], .submit-row input {
+    background: var(--primary-green) !important;
+    color: var(--white) !important;
+    border: 1px solid var(--dark-green);
+    border-radius: 4px;
+    padding: 8px 16px;
+}
+
+.button:hover, input[type=submit]:hover, input[type=button]:hover {
+    background: var(--dark-green) !important;
+}
+
+.default, .button.default {
+    background: var(--light-green) !important;
+}
+
+.object-tools a {
+    background: var(--light-green) !important;
+    border-color: var(--primary-green);
+}
+
+.object-tools a:hover {
+    background: var(--primary-green) !important;
+}
+
+.model-title {
+    color: var(--primary-green);
+}
+
+.breadcrumbs {
+    background: var(--pale-green);
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.breadcrumbs a {
+    color: var(--primary-green);
+}
+
+.messagelist .success {
+    background: var(--pale-green);
+    border-color: var(--light-green);
+    color: var(--dark-green);
+}
+
+.messagelist .warning {
+    background: #fff3cd;
+    border-color: #ffeaa7;
+    color: #856404;
+}
+
+.messagelist .error {
+    background: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.form-row {
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.form-row:last-child {
+    border-bottom: none;
+}
+
+.related-widget-wrapper {
+    background: var(--white);
+    border: 1px solid var(--border-gray);
+    border-radius: 4px;
+    padding: 8px;
+}
+
+.select2-container--admin-autocomplete .select2-selection {
+    border-color: var(--border-gray);
+}
+
+.tabular tr th {
+    background: var(--light-green) !important;
+    color: var(--white) !important;
+}
+
+.tabular tr td {
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.tabular tr:nth-child(even) {
+    background: var(--pale-green);
+}
+
+.inline-group .tabular tr.has_original td {
+    background: var(--light-gray);
+}
+
+.paginator {
+    background: var(--white);
+    border: 1px solid var(--border-gray);
+}
+
+.paginator a, .paginator .this-page {
+    color: var(--primary-green);
+}
+
+.paginator a:hover {
+    background: var(--pale-green);
+}
+
+#changelist table thead th {
+    background: var(--light-green) !important;
+    color: var(--white) !important;
+}
+
+#changelist table tbody tr:nth-child(even) {
+    background: var(--pale-green);
+}
+
+#changelist table tbody tr:hover {
+    background: var(--light-green) !important;
+    color: var(--white);
+}
+
+#changelist table tbody tr:hover a {
+    color: var(--white);
+}
+
+.action-counter {
+    color: var(--primary-green);
+}
+
+.actions select {
+    border-color: var(--border-gray);
+}
+
+.actions .button {
+    background: var(--primary-green) !important;
+}
+
+.login #header {
+    background: var(--primary-green) !important;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.login #container {
+    background: var(--white);
+    border: 1px solid var(--border-gray);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.login .form-row {
+    border-bottom: none;
+}
+
+.login .submit-row {
+    background: var(--pale-green);
+    border-top: 1px solid var(--border-gray);
+}
+
+.errornote {
+    background: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}

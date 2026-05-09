@@ -3,310 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lecturer Dashboard | Teacher Grading System</title>
+    <title>Lecturer Dashboard</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #f0f4f8;
-            color: #1e293b;
-            line-height: 1.5;
-        }
-
-        /* main container */
-        .dashboard-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-        }
-
-        /* header card */
-        .header-card {
-            background: white;
-            border-radius: 1.5rem;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
-            padding: 1.8rem 2rem;
-            border: 1px solid #e2edf2;
-        }
-
-        .header-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .header-title h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #1e4a76, #2c7da0);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .role-badge {
-            background: #eef2ff;
-            color: #1e4a76;
-            padding: 0.3rem 1rem;
-            border-radius: 2rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        /* lecturer info card */
-        .info-card {
-            background: white;
-            border-radius: 1.5rem;
-            border: 1px solid #e2edf2;
-            padding: 1.5rem 2rem;
-            margin-bottom: 2rem;
-            transition: all 0.2s;
-        }
-
-        .info-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #0f3b5c;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #2c7da0;
-            display: inline-block;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .info-item {
-            background: #f8fafc;
-            padding: 0.8rem 1rem;
-            border-radius: 1rem;
-            border-left: 4px solid #2c7da0;
-        }
-
-        .info-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #5b6e8c;
-            margin-bottom: 0.2rem;
-        }
-
-        .info-value {
-            font-size: 1rem;
-            font-weight: 500;
-            color: #0f3b5c;
-            word-break: break-word;
-        }
-
-        /* courses assigned */
-        .courses-card {
-            background: white;
-            border-radius: 1.5rem;
-            border: 1px solid #e2edf2;
-            padding: 1.5rem 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .courses-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #0f3b5c;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .course-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .course-card {
-            background: #f8fafc;
-            border-radius: 1rem;
-            padding: 1rem 1.2rem;
-            flex: 1 1 260px;
-            border: 1px solid #e2edf2;
-            transition: 0.2s;
-        }
-
-        .course-card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border-color: #bdd3e6;
-        }
-
-        .course-code {
-            font-weight: 700;
-            color: #1e4a76;
-            font-size: 1rem;
-        }
-
-        .course-name {
-            font-size: 0.9rem;
-            color: #2c5a7a;
-            margin-top: 0.25rem;
-        }
-
-        /* action buttons */
-        .actions-card {
-            background: white;
-            border-radius: 1.5rem;
-            border: 1px solid #e2edf2;
-            padding: 1.5rem 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .action-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.7rem 1.6rem;
-            border-radius: 2rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-        }
-
-        .btn-primary {
-            background: #2c7da0;
-            color: white;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background: #1e5a78;
-            transform: translateY(-1px);
-        }
-
-        .btn-outline {
-            background: white;
-            border: 1px solid #2c7da0;
-            color: #2c7da0;
-        }
-
-        .btn-outline:hover {
-            background: #eef2ff;
-        }
-
-        .logout-btn {
-            text-align: right;
-            margin-top: 1rem;
-        }
-
-        .logout-link {
-            background: #f1f5f9;
-            padding: 0.5rem 1.2rem;
-            border-radius: 2rem;
-            text-decoration: none;
-            color: #4a627a;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .logout-link:hover {
-            background: #e2e8f0;
-        }
-
-        @media (max-width: 700px) {
-            .dashboard-container {
-                padding: 1rem;
-            }
-            .header-card, .info-card, .courses-card, .actions-card {
-                padding: 1.2rem;
-            }
-        }
+        * { box-sizing: border-box; } body { margin: 0; font-family: 'Google Sans', Arial, sans-serif; background: #e7f0eb; color: #1d2d24; }
+        .shell { max-width: 1180px; margin: 0 auto; padding: 24px; } .top { background:#08783f; color:#fff; border-radius:12px; padding:24px; text-align:center; box-shadow:0 12px 28px rgba(0,0,0,.12); }
+        h1,h2,p { margin-top:0; } .muted { color:#60736a; } .top .muted { color:#d8f2e4; }
+        .actions { margin-top:16px; } a.btn { display:inline-block; margin:5px; padding:10px 14px; border-radius:7px; text-decoration:none; font-weight:900; background:#08783f; color:#fff; } a.btn.light { background:#fff; color:#08783f; }
+        .stats,.grid { display:grid; gap:16px; } .stats { grid-template-columns:repeat(3,1fr); margin:20px 0; } .grid { grid-template-columns:1fr 1fr; align-items:start; }
+        .panel,.stat { background:#fff; border:1px solid #d8e4dd; border-radius:10px; padding:20px; box-shadow:0 8px 20px rgba(0,0,0,.07); }
+        .stat strong { display:block; font-size:30px; color:#08783f; } .course,.row { padding:12px 0; border-top:1px solid #e5ece8; } .course:first-child,.row:first-child { border-top:0; }
+        .tag { display:inline-block; padding:4px 9px; border-radius:999px; font-size:12px; font-weight:900; background:#e8f5ee; color:#08783f; } .tag.red { background:#ffe7e7; color:#9c2525; }.mark{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;font-weight:900}.yes{background:#e8f5ee;color:#08783f}.no{background:#ffe7e7;color:#9c2525}.wait{background:#fff7df;color:#9a4b00}
+        table { width:100%; border-collapse:collapse; background:#fff; } th,td { padding:11px; border-bottom:1px solid #e5ece8; text-align:left; font-size:14px; } th { background:#f7faf8; color:#52645b; }
+        @media(max-width:850px){.stats,.grid{display:block}.panel,.stat{margin-bottom:14px}}
     </style>
 </head>
 <body>
-<div class="dashboard-container">
-    <!-- Header -->
-    <div class="header-card">
-        <div class="header-title">
-            <h1>📚 Lecturer Dashboard</h1>
-            <div class="role-badge">Lecturer Portal</div>
+<main class="shell">
+    <section class="top">
+        <h1>{{ lecturer.firstname }} {{ lecturer.lastname }}</h1>
+        <p class="muted">{{ lecturer.email }} | {{ lecturer_department }}</p>
+        <div class="actions">
+            <a class="btn light" href="{% url 'lecturer_enter_grades' %}">Enter grades</a>
+            <a class="btn light" href="{% url 'lecturer_view_grades' %}">View submissions</a>
+            <a class="btn light" href="{% url 'logout' %}">Sign out</a>
         </div>
-        <p style="color: #4a627a; margin-top: 0.3rem;">Manage your courses, enter grades, and track submissions.</p>
-    </div>
-
-    <!-- Lecturer Information -->
-    <div class="info-card">
-        <div class="info-title">👤 Your Information</div>
-        <div class="info-grid">
-            <div class="info-item">
-                <div class="info-label">Full name</div>
-                <div class="info-value">{{ lecturer.firstname }} {{ lecturer.lastname }}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Email address</div>
-                <div class="info-value">{{ lecturer.email }}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Department ID</div>
-                <div class="info-value">{{ lecturer.departmentid }}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Phone</div>
-                <div class="info-value">{{ lecturer.phone|default:"Not provided" }}</div>
-            </div>
+    </section>
+    <section class="stats">
+        <div class="stat"><strong>{{ submitted_count }}</strong><span class="muted">Awaiting HOD</span></div>
+        <div class="stat"><strong>{{ approved_count }}</strong><span class="muted">Approved/released</span></div>
+        <div class="stat"><strong>{{ rejected_count }}</strong><span class="muted">Returned</span></div>
+    </section>
+    <section class="grid">
+        <div class="panel">
+            <h2>Assigned Courses</h2>
+            {% for assignment in assigned_courses %}
+                <div class="course">
+                    <strong>{{ assignment.courseid.coursecode }} - {{ assignment.courseid.coursename }}</strong><br>
+                    {% if assignment.portal_is_open %}<span class="tag">Portal open</span>{% else %}<span class="tag red">Portal closed</span>{% endif %}
+                </div>
+            {% empty %}<p class="muted">No courses assigned yet.</p>{% endfor %}
         </div>
-    </div>
-
-    <!-- Assigned Courses -->
-    <div class="courses-card">
-        <div class="courses-title">
-            📖 My Assigned Courses
+        <div class="panel">
+            <h2>Approval Progress</h2>
+            <table>
+                <tr><th>Student</th><th>Course</th><th>Score</th><th>HOD</th><th>Dean</th></tr>
+                {% for grade in grades %}
+                    <tr>
+                        <td>{{ grade.studentid.studentnumber }}</td>
+                        <td>{{ grade.assessmentid.courseid.coursecode }}</td>
+                        <td>{{ grade.score }}</td>
+                        <td>{% if grade.status == 'rejected' %}<span class="mark no">x</span>{% elif grade.status == 'approved' or grade.status == 'final' %}<span class="mark yes">✓</span>{% else %}<span class="mark wait">…</span>{% endif %}</td>
+                        <td>{% if grade.status == 'final' %}<span class="mark yes">✓</span>{% elif grade.status == 'rejected' %}<span class="mark no">x</span>{% else %}<span class="mark wait">…</span>{% endif %}</td>
+                    </tr>
+                {% empty %}<tr><td colspan="5">No submissions yet.</td></tr>{% endfor %}
+            </table>
         </div>
-        {% if assigned_courses %}
-            <div class="course-list">
-                {% for assignment in assigned_courses %}
-                    <div class="course-card">
-                        <div class="course-code">{{ assignment.courseid.coursecode }}</div>
-                        <div class="course-name">{{ assignment.courseid.coursename }}</div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p style="color: #7b8ea0;">No courses assigned yet. Please contact the HOD.</p>
-        {% endif %}
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="actions-card">
-        <div class="courses-title">⚡ Quick Actions</div>
-        <div class="action-buttons">
-            <a href="{% url 'lecturer_enter_grades' %}" class="btn btn-primary">📝 Enter Grades</a>
-            <a href="{% url 'lecturer_view_grades' %}" class="btn btn-outline">📊 View My Grades</a>
-        </div>
-    </div>
-
-    <!-- Logout -->
-    <div class="logout-btn">
-        <a href="{% url 'logout' %}" class="logout-link">🚪 Sign out</a>
-    </div>
-</div>
+    </section>
+</main>
 </body>
 </html>

@@ -1,43 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Grades – Lecturer</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Submissions</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
-        h1 { color: #333; }
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #4CAF50; color: white; }
-        a { color: #4CAF50; text-decoration: none; margin-top: 20px; display: inline-block; }
+        *{box-sizing:border-box}
+        body{margin:0;font-family:'Google Sans',Arial,sans-serif;background:#e7f0eb;color:#1d2d24}
+        .shell{max-width:1180px;margin:0 auto;padding:24px}
+        .top{background:#08783f;color:white;border-radius:12px;padding:24px;text-align:center;box-shadow:0 12px 28px rgba(0,0,0,.12)}
+        .top a{display:inline-block;margin-top:8px;color:#08783f;background:#fff;padding:9px 13px;border-radius:7px;text-decoration:none;font-weight:900}
+        .panel{margin-top:18px;background:white;border:1px solid #d8e4dd;border-radius:10px;padding:20px;box-shadow:0 8px 20px rgba(0,0,0,.07)}
+        table{width:100%;border-collapse:collapse}th,td{padding:12px;border-bottom:1px solid #e5ece8;text-align:left;vertical-align:top}th{background:#f7faf8;color:#52645b}
+        .flag{color:#9a4b00;font-weight:900}.reason{font-size:13px;color:#5d6d64;margin-top:4px}.mark{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;font-weight:900}
+        .yes{background:#e8f5ee;color:#08783f}.no{background:#ffe7e7;color:#9c2525}.wait{background:#fff7df;color:#9a4b00}
+        @media(max-width:850px){table{display:block;overflow-x:auto;white-space:nowrap}}
     </style>
 </head>
 <body>
-    <h1>Grades I have submitted</h1>
-    <p>Lecturer: {{ lecturer.firstname }} {{ lecturer.lastname }}</p>
-
-    {% if grades %}
+<main class="shell">
+    <section class="top">
+        <h1>View Submissions</h1>
+        <p>{{ lecturer.firstname }} {{ lecturer.lastname }}</p>
+        <a href="{% url 'lecturer_dashboard' %}">Back to dashboard</a>
+    </section>
+    <section class="panel">
         <table>
-            <thead>
-                <tr><th>Student</th><th>Course</th><th>Assessment</th><th>Score</th><th>Letter Grade</th><th>Date</th></tr>
-            </thead>
-            <tbody>
-                {% for grade in grades %}
+            <tr><th>Student</th><th>Course</th><th>Score</th><th>Letter</th><th>AI Flag</th><th>HOD</th><th>Dean</th><th>Comment</th></tr>
+            {% for grade in grades %}
                 <tr>
-                    <td>{{ grade.studentid.firstname }} {{ grade.studentid.lastname }}</td>
-                    <td>{{ grade.assessmentid.courseid.coursename }}</td>
-                    <td>{{ grade.assessmentid.assessmentname }}</td>
-                    <td>{{ grade.score }}</td>
-                    <td>{{ grade.lettergrade|default:"-" }}</td>
-                    <td>{{ grade.submissiondate|date:"Y-m-d" }}</td>
+                    <td>{{ grade.studentid.studentnumber }}<br>{{ grade.studentid.firstname }} {{ grade.studentid.lastname }}</td>
+                    <td>{{ grade.assessmentid.courseid.coursecode }}<br>{{ grade.assessmentid.courseid.coursename }}</td>
+                    <td>{{ grade.score }}<br><small>Class avg: {{ grade.class_average|default:"-" }}</small></td>
+                    <td>{{ grade.lettergrade }}</td>
+                    <td>{% if grade.was_flagged %}<span class="flag">Flagged</span><div class="reason">{{ grade.override_reason|default:"No reason provided" }}</div>{% else %}Clear{% endif %}</td>
+                    <td>{% if grade.status == 'rejected' %}<span class="mark no">x</span>{% elif grade.status == 'approved' or grade.status == 'final' %}<span class="mark yes">✓</span>{% else %}<span class="mark wait">…</span>{% endif %}</td>
+                    <td>{% if grade.status == 'final' %}<span class="mark yes">✓</span>{% elif grade.status == 'rejected' %}<span class="mark no">x</span>{% else %}<span class="mark wait">…</span>{% endif %}</td>
+                    <td>{{ grade.hod_comment|default:"-" }}</td>
                 </tr>
-                {% endfor %}
-            </tbody>
+            {% empty %}
+                <tr><td colspan="8">No grades submitted yet.</td></tr>
+            {% endfor %}
         </table>
-    {% else %}
-        <p>No grades submitted yet.</p>
-    {% endif %}
-
-    <br>
-    <a href="{% url 'lecturer_dashboard' %}">← Back to Dashboard</a>
+    </section>
+</main>
 </body>
 </html>

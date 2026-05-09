@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICBM Admin</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Google Sans', Arial, Helvetica, sans-serif;
+            background: #08783f;
+            color: #151f1a;
+            padding: 24px;
+        }
+        .frame {
+            max-width: 1160px;
+            min-height: calc(100vh - 48px);
+            margin: 0 auto;
+            border: 5px solid #09552f;
+            border-radius: 10px;
+            background: #f5f6f5;
+            overflow: hidden;
+            box-shadow: 0 22px 44px rgba(0,0,0,.22);
+        }
+        .header {
+            height: 66px;
+            background: #08783f;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 26px;
+        }
+        .brand {
+            font-size: 22px;
+            font-weight: 800;
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .profile-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #fff;
+            color: #08783f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: calc(100vh - 66px);
+        }
+        .sidebar {
+            background: #e2e8e5;
+            padding: 20px;
+            border-right: 1px solid #d1d5db;
+        }
+        .sidebar h2 {
+            margin: 0 0 20px 0;
+            font-size: 18px;
+            color: #374151;
+            font-weight: 800;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #374151;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .nav-item:hover {
+            background: #08783f;
+            color: white;
+        }
+        .nav-item.active {
+            background: #08783f;
+            color: white;
+        }
+        .nav-sub {
+            display: block;
+            padding: 8px 16px 8px 32px;
+            margin-left: 16px;
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 13px;
+            border-left: 2px solid #e5e7eb;
+        }
+        .nav-sub:hover {
+            color: #08783f;
+            border-left-color: #08783f;
+        }
+        .nav-sub.plain {
+            border-left: none;
+            margin-left: 0;
+        }
+        .content {
+            padding: 24px 32px;
+            overflow-y: auto;
+            background: #ffffff;
+        }
+        .crumb {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+        .panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .panel-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 24px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .panel-title h1 {
+            margin: 0 0 8px 0;
+            font-size: 24px;
+            color: #111827;
+            font-weight: 800;
+        }
+        .panel-title p {
+            margin: 0 0 4px 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .bulk {
+            background: #08783f;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .tools {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .tools input {
+            height: 40px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 0 12px;
+            font-size: 14px;
+        }
+        .tools button {
+            height: 40px;
+            border: 0;
+            border-radius: 6px;
+            background: #374151;
+            color: white;
+            padding: 0 16px;
+            font-weight: 600;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #f8fafc;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .student-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #08783f;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 12px;
+        }
+        .score-control {
+            display: grid;
+            grid-template-columns: minmax(120px, 1fr) auto auto;
+            gap: 10px;
+            align-items: center;
+        }
+        .score-control input {
+            height: 34px;
+            border: 1px solid #cfd8d3;
+            border-radius: 6px;
+            padding: 0 10px;
+        }
+        .pass {
+            display: inline-block;
+            min-width: 52px;
+            text-align: center;
+            color: #08783f;
+            background: #c9f4e3;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 900;
+        }
+        .submit-row {
+            padding: 16px;
+            text-align: center;
+            background: #fff;
+        }
+        .submit-row button {
+            width: 255px;
+            max-width: 100%;
+            height: 40px;
+            border: 0;
+            border-radius: 7px;
+            background: #08783f;
+            color: white;
+            font-weight: 900;
+        }
+        .footer-strip {
+            height: 34px;
+            background: #08783f;
+        }
+                @media (max-width: 900px) {
+            body { padding: 0; }
+            .frame { min-height: 100vh; border: 0; border-radius: 0; }
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { border-right: 0; border-bottom: 1px solid #e2e8e5; }
+            .tools { justify-content: flex-start; }
+            table { display: block; overflow-x: auto; white-space: nowrap; }
+        }
+    </style>
+</head>
+<body>
+    <div class="frame">
+        <header class="header">
+            <div class="brand">ICBM</div>
+            <div class="profile"><span class="profile-dot">•</span>{{ request.user.first_name|default:"Your Name" }} ▾</div>
+        </header>
+        <div class="layout">
+            <aside class="sidebar">
+                <h2>Admin Profile</h2>
+                <a class="nav-item" href="/admin/"><span>▦</span>Dashboard</a>
+                <a class="nav-item" href="/admin/auth/user/"><span>◎</span>User <span style="margin-left:auto;">⌄</span></a>
+                <a class="nav-item" href="/admin/grades/enrollment/"><span>⌂</span>Attendance <span style="margin-left:auto;">⌄</span></a>
+                <a class="nav-item" href="/admin/grades/course/"><span>♧</span>Configuration <span style="margin-left:auto;">⌄</span></a>
+                <a class="nav-item active" href="/admin/"><span>▣</span>Result <span style="margin-left:auto;">⌄</span></a>
+                <a class="nav-sub" href="/admin/">Publish Result</a>
+                <a class="nav-sub plain" href="/admin/grades/grade/">Result Report</a>
+                <a class="nav-item" href="#"><span>▤</span>Notice <span style="margin-left:auto;">⌄</span></a>
+                <a class="nav-item" href="/admin/grades/course/"><span>▧</span>Syllabus <span style="margin-left:auto;">⌄</span></a>
+                <a class="nav-item" href="/admin/grades/assessment/"><span>▦</span>Exam Schedule</a>
+                <a class="nav-item" href="/logout/"><span>↻</span>Log Out</a>
+            </aside>
+            <main class="content">
+                <p class="crumb">Publish result ›</p>
+                <section class="panel">
+                    <div class="panel-top">
+                        <div class="panel-title">
+                            <div>
+                                <h1>Batch: {{ student_count|default:"42" }}</h1>
+                                <p>{{ first_course.coursename|default:"Forensic Medicine & Toxicology" }} - {{ first_course.coursecode|default:"66579" }}</p>
+                                <p>1st Professional Exam</p>
+                            </div>
+                            <a class="bulk" href="/admin/grades/student/add/">Bulk Upload</a>
+                        </div>
+                        <div class="tools">
+                            <input type="text" placeholder="Student name">
+                            <button type="button">Search</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL NO.</th>
+                                <th>STUDENT NAME</th>
+                                <th>ID NUMBER</th>
+                                <th>INPUT NUMBER & RESULT STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        <div class="student-name">
+                                            <span class="avatar">{{ student.firstname|slice:":1" }}{{ student.lastname|slice:":1" }}</span>
+                                            {{ student.firstname }} {{ student.lastname }}
+                                        </div>
+                                    </td>
+                                    <td>ID - {{ student.studentnumber|default:student.studentid }}</td>
+                                    <td>
+                                        <div class="score-control">
+                                            <input type="text" placeholder="input number">
+                                            <span class="pass">Pass</span>
+                                            <span>⌄</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr><td colspan="4" style="text-align:center;">No students added yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="submit-row"><button type="button">Submit</button></div>
+                </section>
+            </main>
+        </div>
+        <div class="footer-strip"></div>
+    </div>
+</body>
+</html>
