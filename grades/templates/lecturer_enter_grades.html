@@ -1,72 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter Grades</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Grades | ICBM</title>
     <style>
-        *{box-sizing:border-box} body{margin:0;font-family:'Google Sans',Arial,sans-serif;background:#e7f0eb;color:#1d2d24}.shell{max-width:1180px;margin:0 auto;padding:24px}
-        .top{background:#08783f;color:#fff;border-radius:12px;padding:22px;text-align:center}.top p{color:#d8f2e4}.grid{display:grid;grid-template-columns:1.3fr .7fr;gap:16px;margin-top:18px}
-        .panel{background:#fff;border:1px solid #d8e4dd;border-radius:10px;padding:20px;box-shadow:0 8px 20px rgba(0,0,0,.07)}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-        label{display:block;font-weight:900;margin:0 0 7px}input,select,textarea{width:100%;border:1px solid #cbd8d1;border-radius:7px;padding:10px;font:inherit}textarea{min-height:90px}
-        .field{margin-bottom:14px}.btn{border:0;border-radius:7px;background:#08783f;color:#fff;font-weight:900;padding:11px 16px;cursor:pointer}.link{color:#fff;font-weight:900}.meta{display:grid;gap:10px}.meta div{display:flex;justify-content:space-between;border-bottom:1px solid #e5ece8;padding-bottom:8px}.score{font-size:36px;font-weight:900;color:#08783f}
-        .flag{display:none;background:#fff7df;border:1px solid #e9d48a;color:#6a5200;border-radius:8px;padding:12px;margin-top:14px}.error{display:none;background:#ffe7e7;color:#8a1e1e;border:1px solid #efb5b5;border-radius:8px;padding:12px;margin-top:12px}
-        @media(max-width:850px){.grid,.form-grid{display:block}.panel{margin-bottom:14px}}
+        *{box-sizing:border-box}body{margin:0;height:100vh;overflow:hidden;font-family:'Google Sans',Arial,sans-serif;background:#f8fafc;color:#334155}.app{display:grid;grid-template-columns:260px 1fr;height:100vh}.side{background:#1e2a3a;color:#e2e8f0;padding:24px;overflow-y:auto}.brand{font-size:22px;font-weight:800;color:#fff;margin-bottom:28px}.nav a{display:block;color:#e2e8f0;text-decoration:none;padding:12px 14px;border-radius:10px;margin:6px 0}.nav a:hover,.nav a.active{background:#334155}.main{padding:24px;overflow-y:auto}.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.top h1{margin:0;color:#0f172a}.avatar{position:relative}.avatar button{border:0;background:#fff;border-radius:999px;padding:8px 12px;color:#0f172a;box-shadow:0 4px 6px -1px rgb(0 0 0 / .05);cursor:pointer}.menu{display:none;position:absolute;right:0;top:44px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;min-width:150px;box-shadow:0 12px 24px rgb(15 23 42 / .12);overflow:hidden}.menu a{display:block;padding:10px 12px;text-decoration:none;color:#334155}.menu a:hover{background:#f8fafc}.avatar:hover .menu{display:block}.grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.6fr);gap:18px}.card{background:#fff;border-radius:12px;box-shadow:0 4px 6px -1px rgb(0 0 0 / .05);padding:22px;border:1px solid #e2e8f0}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{margin-bottom:14px}label{display:block;margin-bottom:7px;font-weight:700;color:#0f172a}input,select,textarea{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:11px 12px;font:inherit;color:#334155;background:#fff}textarea{min-height:96px}.btn{border:0;border-radius:10px;background:#3b82f6;color:#fff;font-weight:800;padding:12px 16px;cursor:pointer}.btn:hover{background:#2563eb}.btn.success{background:#10b981}.warning{display:none;background:#fef3c7;border:1px solid #f59e0b;border-radius:12px;padding:14px;margin:12px 0;color:#7c4a03}.error{display:none;background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;border-radius:12px;padding:12px;margin-top:12px}.meta div{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid #e2e8f0;padding:11px 0}.score{font-size:42px;line-height:1;font-weight:900;color:#3b82f6}.hint{color:#64748b}@media(max-width:900px){.app{display:block;height:100vh}.side{padding:16px}.grid,.form-grid{display:block}.card{margin-bottom:16px}}
     </style>
 </head>
 <body>
-<main class="shell">
-    <section class="top"><h1>Enter Student Grades</h1><p>{{ lecturer.firstname }} {{ lecturer.lastname }}</p><a class="link" href="{% url 'lecturer_dashboard' %}">Back to dashboard</a></section>
-    <section class="grid">
-        <form id="gradeForm" class="panel">
-            {% csrf_token %}
-            {% if assigned_courses %}
-            <div class="form-grid">
-                <div class="field"><label>Student number</label><input id="studentId" name="student_id" placeholder="Example: ma0001" required></div>
-                <div class="field"><label>Course</label><select id="courseId" name="course_id" required><option value="">Choose course</option>{% for assignment in assigned_courses %}<option value="{{ assignment.courseid.courseid }}">{{ assignment.courseid.coursecode }} - {{ assignment.courseid.coursename }}</option>{% endfor %}</select></div>
-            </div>
-            <div class="form-grid">
-                <div class="field"><label>Assignment</label><input class="mark" id="assignment" name="assignment" type="number" min="0" max="100" step="0.01" required></div>
-                <div class="field"><label>Quiz</label><input class="mark" id="quiz" name="quiz" type="number" min="0" max="100" step="0.01" required></div>
-                <div class="field"><label>Midterm</label><input class="mark" id="midterm" name="midterm" type="number" min="0" max="100" step="0.01" required></div>
-                <div class="field"><label>Final exam</label><input class="mark" id="final" name="final" type="number" min="0" max="100" step="0.01" required></div>
-            </div>
-            <div id="flagBox" class="flag">
-                <strong>AI flagged grade</strong>
-                <div class="field"><label>Reason type</label><select id="reasonType" name="override_reason_type"><option value="">Choose reason</option>{% for choice in override_choices %}<option value="{{ choice }}">{{ choice }}</option>{% endfor %}</select></div>
-                <div class="field"><label>Explanation</label><textarea id="reasonText" name="override_reason" placeholder="Explain why this grade is valid."></textarea></div>
-            </div>
-            <button class="btn" id="submitBtn" type="submit">Submit grades</button>
-            <div id="errorMsg" class="error"></div>
-            {% else %}
-            <p>No open grade-entry portal. Ask the HOD to open one.</p>
-            {% endif %}
-        </form>
-        <aside class="panel">
-            <h2>Student Information</h2>
-            <h3 id="studentName">Enter a student number</h3>
-            <div class="meta">
-                <div><span>Email</span><strong id="studentEmail">-</strong></div>
-                <div><span>Program</span><strong id="studentProgram">-</strong></div>
-                <div><span>Year</span><strong id="studentYear">-</strong></div>
-                <div><span>Semester</span><strong id="studentSemester">-</strong></div>
-                <div><span>Department</span><strong id="studentDepartment">-</strong></div>
-                <div><span>Mode</span><strong id="studentMode">-</strong></div>
-            </div>
-            <p class="score" id="finalScore">0.00</p><p id="letterGrade">Letter grade: -</p>
-        </aside>
-    </section>
-</main>
+<div class="app">
+    <aside class="side">
+        <div class="brand">ICBM</div>
+        <nav class="nav">
+            <a href="{% url 'lecturer_dashboard' %}">Dashboard</a>
+            <a class="active" href="{% url 'lecturer_enter_grades' %}">Enter grades</a>
+            <a href="{% url 'lecturer_view_grades' %}">View submissions</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </nav>
+    </aside>
+    <main class="main">
+        <div class="top">
+            <div><h1>Enter Grades</h1><p class="hint">Grades submit straight to the Head of Department for review.</p></div>
+            <div class="avatar"><button>{{ request.user.first_name|first|default:request.user.username|first|upper }} {{ request.user.last_name|first|upper }}</button><div class="menu"><a href="#">Profile</a><a href="{% url 'logout' %}">Logout</a></div></div>
+        </div>
+        <section class="grid">
+            <form id="gradeForm" class="card">
+                {% csrf_token %}
+                {% if assigned_courses %}
+                <div class="form-grid">
+                    <div class="field"><label>Student number</label><input id="studentId" name="student_id" placeholder="Example: ma0001" required></div>
+                    <div class="field"><label>Course</label><select id="courseId" name="course_id" required><option value="">Choose course</option>{% for assignment in assigned_courses %}<option value="{{ assignment.courseid.courseid }}">{{ assignment.courseid.coursecode }} - {{ assignment.courseid.coursename }}</option>{% endfor %}</select></div>
+                    <div class="field"><label>Assignment</label><input class="mark" id="assignment" name="assignment" type="number" min="0" max="100" step="0.01" required></div>
+                    <div class="field"><label>Quiz</label><input class="mark" id="quiz" name="quiz" type="number" min="0" max="100" step="0.01" required></div>
+                    <div class="field"><label>Midterm</label><input class="mark" id="midterm" name="midterm" type="number" min="0" max="100" step="0.01" required></div>
+                    <div class="field"><label>Final exam</label><input class="mark" id="final" name="final" type="number" min="0" max="100" step="0.01" required></div>
+                </div>
+                <div id="flagBox" class="warning">
+                    <strong>Grade requires lecturer confirmation</strong>
+                    <p class="hint">This result looks unusual against the course pattern. Confirm why it is correct, or edit the mark before submitting.</p>
+                    <div class="field"><label>Reason type</label><select id="reasonType" name="override_reason_type"><option value="">Choose reason</option>{% for choice in override_choices %}<option value="{{ choice }}">{{ choice }}</option>{% endfor %}</select></div>
+                    <div class="field"><label>Explanation</label><textarea id="reasonText" name="override_reason" placeholder="Example: student had approved accommodations or made significant improvement."></textarea></div>
+                </div>
+                <button class="btn" type="submit">Submit Grades</button>
+                <div id="errorMsg" class="error"></div>
+                {% else %}
+                <p>No open grade-entry portal. Finalized courses cannot receive new grades.</p>
+                {% endif %}
+            </form>
+            <aside class="card">
+                <h2>Student Information</h2>
+                <h3 id="studentName">Enter a student number</h3>
+                <div class="meta">
+                    <div><span>Email</span><strong id="studentEmail">-</strong></div>
+                    <div><span>Program</span><strong id="studentProgram">-</strong></div>
+                    <div><span>Year</span><strong id="studentYear">-</strong></div>
+                    <div><span>Semester</span><strong id="studentSemester">-</strong></div>
+                    <div><span>Department</span><strong id="studentDepartment">-</strong></div>
+                    <div><span>Mode</span><strong id="studentMode">-</strong></div>
+                </div>
+                <p class="score" id="finalScore">0.00</p>
+                <p id="letterGrade">Letter grade: -</p>
+            </aside>
+        </section>
+    </main>
+</div>
 <script>
-const students={{ students_json|safe }}; const averages={{ course_averages_json|safe }}; const threshold={{ flag_threshold }};
-const map=new Map(); students.forEach(s=>{map.set(String(s.studentnumber).toLowerCase(),s);map.set(String(s.studentid),s);});
-const ids=['assignment','quiz','midterm','final']; const form=document.getElementById('gradeForm'), flagBox=document.getElementById('flagBox'), reasonType=document.getElementById('reasonType'), reasonText=document.getElementById('reasonText'), errorMsg=document.getElementById('errorMsg');
+const students={{ students_json|safe }}, averages={{ course_averages_json|safe }}, threshold=25;
+const map=new Map();students.forEach(s=>{map.set(String(s.studentnumber).toLowerCase(),s);map.set(String(s.studentid),s)});
+const ids=['assignment','quiz','midterm','final'], flagBox=document.getElementById('flagBox'), reasonType=document.getElementById('reasonType'), reasonText=document.getElementById('reasonText'), errorMsg=document.getElementById('errorMsg');
 function cookie(n){return document.cookie.split('; ').find(r=>r.startsWith(n+'='))?.split('=')[1]||''}
 function val(id){return Number(document.getElementById(id).value||0)}
 function letter(s){return s>=90?'A':s>=85?'A-':s>=80?'B+':s>=75?'B':s>=70?'B-':s>=65?'C+':s>=60?'C':s>=55?'C-':s>=50?'D':'F'}
-function calc(){let score=val('assignment')*.2+val('quiz')*.2+val('midterm')*.3+val('final')*.3;let avg=Number(averages[document.getElementById('courseId').value]||75);let flagged=Math.abs(score-avg)>threshold;document.getElementById('finalScore').textContent=score.toFixed(2);document.getElementById('letterGrade').textContent='Letter grade: '+letter(score);flagBox.style.display=flagged?'block':'none';reasonType.required=flagged;reasonText.required=flagged}
-function showStudent(){let s=map.get(document.getElementById('studentId').value.trim().toLowerCase()); if(!s)return; document.getElementById('studentName').textContent=s.studentnumber+' - '+s.firstname+' '+s.lastname; document.getElementById('studentEmail').textContent=s.email; document.getElementById('studentProgram').textContent=s.program; document.getElementById('studentYear').textContent=s.year; document.getElementById('studentSemester').textContent=s.semester; document.getElementById('studentDepartment').textContent=s.department; document.getElementById('studentMode').textContent=s.mode}
-ids.forEach(id=>document.getElementById(id)?.addEventListener('input',calc)); document.getElementById('courseId')?.addEventListener('change',calc); document.getElementById('studentId')?.addEventListener('input',showStudent);
-form?.addEventListener('submit',async e=>{e.preventDefault();errorMsg.style.display='none';let payload=Object.fromEntries(new FormData(form).entries());let r=await fetch("{% url 'submit_grades_api' %}",{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':cookie('csrftoken')},body:JSON.stringify(payload)});let data=await r.json();if(data.success){location.href=data.redirect_url||'/'}else{errorMsg.textContent=data.error||'Could not submit grades.';errorMsg.style.display='block'}});
+function calc(){let score=val('assignment')*.2+val('quiz')*.2+val('midterm')*.3+val('final')*.3, avg=Number(averages[document.getElementById('courseId').value]||75), flagged=Math.abs(score-avg)>threshold;document.getElementById('finalScore').textContent=score.toFixed(2);document.getElementById('letterGrade').textContent='Letter grade: '+letter(score);flagBox.style.display=flagged?'block':'none';reasonType.required=flagged;reasonText.required=flagged}
+function showStudent(){let s=map.get(document.getElementById('studentId').value.trim().toLowerCase());if(!s)return;document.getElementById('studentName').textContent=s.studentnumber+' - '+s.firstname+' '+s.lastname;document.getElementById('studentEmail').textContent=s.email;document.getElementById('studentProgram').textContent=s.program;document.getElementById('studentYear').textContent=s.year;document.getElementById('studentSemester').textContent=s.semester;document.getElementById('studentDepartment').textContent=s.department;document.getElementById('studentMode').textContent=s.mode}
+ids.forEach(id=>document.getElementById(id)?.addEventListener('input',calc));document.getElementById('courseId')?.addEventListener('change',calc);document.getElementById('studentId')?.addEventListener('input',showStudent);
+document.getElementById('gradeForm')?.addEventListener('submit',async e=>{e.preventDefault();errorMsg.style.display='none';let payload=Object.fromEntries(new FormData(e.currentTarget).entries());let r=await fetch("{% url 'submit_grades_api' %}",{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':cookie('csrftoken')},body:JSON.stringify(payload)});let data=await r.json();if(data.success){location.href=data.redirect_url||'/'}else{errorMsg.textContent=data.error||'Could not submit grades.';errorMsg.style.display='block'}});
 </script>
 </body>
 </html>

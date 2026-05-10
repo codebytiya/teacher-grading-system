@@ -1,3 +1,36 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>HOD Review</title>
-<style>*{box-sizing:border-box}body{margin:0;font-family:'Google Sans',Arial,sans-serif;background:#e7f0eb;color:#1d2d24}.shell{max-width:1180px;margin:0 auto;padding:24px}.top{background:#08783f;color:white;border-radius:12px;padding:22px;text-align:center}.panel{background:white;border:1px solid #d8e4dd;border-radius:10px;margin-top:18px;padding:20px;box-shadow:0 8px 20px rgba(0,0,0,.07)}a{color:white;font-weight:900}table{width:100%;border-collapse:collapse}th,td{padding:12px;border-bottom:1px solid #e5ece8;text-align:left;vertical-align:top}th{background:#f7faf8;color:#52645b}button{border:0;border-radius:7px;background:#08783f;color:white;font-weight:900;padding:8px 11px;margin:3px}.danger{background:#9c2525}textarea{width:220px;min-height:70px;border:1px solid #cbd8d1;border-radius:7px}.warn{color:#9a4b00;font-weight:900}.ok{color:#08783f;font-weight:900}</style></head>
-<body><main class="shell"><section class="top"><h1>HOD Grade Review</h1><a href="{% url 'hod_dashboard' %}">Back to dashboard</a></section><section class="panel"><form method="post">{% csrf_token %}<table><tr><th>Student</th><th>Course</th><th>Score</th><th>AI Decision</th><th>Lecturer Reason</th><th>HOD Comment</th><th>Action</th></tr>{% for grade in grades %}<tr><td>{{ grade.studentid.studentnumber }}<br>{{ grade.studentid.firstname }} {{ grade.studentid.lastname }}</td><td>{{ grade.assessmentid.courseid.coursecode }}</td><td>{{ grade.score }}<br>Avg: {{ grade.class_average|default:"-" }}</td><td>{% if grade.was_flagged and not grade.override_reason %}<span class="warn">Auto-reject: reason missing</span>{% elif grade.was_flagged %}<span class="warn">Flagged: review reason</span>{% else %}<span class="ok">Within {{ threshold }} points: suggest approval</span>{% endif %}</td><td>{{ grade.override_reason|default:"-" }}</td><td><textarea name="comment_{{ grade.gradeid }}"></textarea></td><td><button name="approve" value="{{ grade.gradeid }}">Approve</button><button class="danger" name="reject" value="{{ grade.gradeid }}">Reject</button></td></tr>{% empty %}<tr><td colspan="7">No submitted grades.</td></tr>{% endfor %}</table></form></section></main></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HoD Grade Review | ICBM</title>
+    <style>
+        *{box-sizing:border-box}body{margin:0;height:100vh;overflow:hidden;font-family:'Google Sans',Arial,sans-serif;background:#f8fafc;color:#334155}.app{display:grid;grid-template-columns:260px 1fr;height:100vh}.side{background:#1e2a3a;color:#e2e8f0;padding:24px;overflow-y:auto}.brand{font-size:22px;font-weight:800;color:#fff;margin-bottom:28px}.nav a{display:block;color:#e2e8f0;text-decoration:none;padding:12px 14px;border-radius:10px;margin:6px 0}.nav a:hover,.nav a.active{background:#334155}.main{padding:24px;overflow-y:auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.top h1{margin:0;color:#0f172a}.card{background:#fff;border-radius:12px;box-shadow:0 4px 6px -1px rgb(0 0 0 / .05);padding:20px;border:1px solid #e2e8f0;overflow:auto}.avatar{position:relative}.avatar button{border:0;background:#fff;border-radius:999px;padding:8px 12px;color:#0f172a;box-shadow:0 4px 6px -1px rgb(0 0 0 / .05)}.menu{display:none;position:absolute;right:0;top:44px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;min-width:150px;box-shadow:0 12px 24px rgb(15 23 42 / .12);overflow:hidden}.menu a{display:block;padding:10px 12px;text-decoration:none;color:#334155}.avatar:hover .menu{display:block}table{width:100%;border-collapse:collapse;min-width:940px}th,td{padding:12px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#f8fafc;color:#0f172a}textarea{width:240px;min-height:76px;border:1px solid #cbd5e1;border-radius:10px;padding:10px;font:inherit}.btn,button{border:0;border-radius:10px;background:#3b82f6;color:white;font-weight:800;padding:9px 12px;cursor:pointer}.btn:hover,button:hover{background:#2563eb}.danger{background:#ef4444}.success{background:#10b981}.warn{background:#fef3c7;border:1px solid #f59e0b;border-radius:10px;padding:8px;color:#92400e}.ok{color:#047857;font-weight:800}@media(max-width:900px){.app{display:block}}
+    </style>
+</head>
+<body>
+<div class="app">
+    <aside class="side"><div class="brand">ICBM</div><nav class="nav"><a href="{% url 'hod_dashboard' %}">Dashboard</a><a class="active" href="{% url 'hod_grades' %}">Review grades</a><a href="{% url 'logout' %}">Logout</a></nav></aside>
+    <main class="main">
+        <div class="top"><h1>Grade Review</h1><div class="avatar"><button>{{ request.user.username|first|upper }}</button><div class="menu"><a href="#">Profile</a><a href="{% url 'logout' %}">Logout</a></div></div></div>
+        <section class="card">
+            <form method="post">{% csrf_token %}
+                <table>
+                    <tr><th>Student</th><th>Course</th><th>Score</th><th>Validation</th><th>Lecturer reason</th><th>HoD comment</th><th>Action</th></tr>
+                    {% for grade in grades %}
+                    <tr>
+                        <td>{{ grade.studentid.studentnumber }}<br>{{ grade.studentid.firstname }} {{ grade.studentid.lastname }}</td>
+                        <td>{{ grade.assessmentid.courseid.coursecode }}</td>
+                        <td>{{ grade.percentage|default:grade.score }}%<br>Avg: {{ grade.class_average|default:"-" }}</td>
+                        <td>{% if grade.was_flagged and not grade.flag_override_reason %}<div class="warn">Auto-reject if approved: flagged grade needs a lecturer reason.</div>{% elif grade.was_flagged %}<div class="warn">Flagged by validation. Review the reason before approving.</div>{% else %}<span class="ok">Within expected range. Suggested approval.</span>{% endif %}</td>
+                        <td>{{ grade.flag_override_reason|default:grade.override_reason|default:"-" }}{% if grade.flag_reasons %}<br><small>{{ grade.flag_reasons|join:", " }}</small>{% endif %}</td>
+                        <td><textarea name="comment_{{ grade.gradeid }}" placeholder="Required when returning. Optional when approving."></textarea></td>
+                        <td><button class="success" name="approve" value="{{ grade.gradeid }}">Approve</button><button class="danger" name="reject" value="{{ grade.gradeid }}">Return</button></td>
+                    </tr>
+                    {% empty %}<tr><td colspan="7">No submitted grades.</td></tr>{% endfor %}
+                </table>
+            </form>
+        </section>
+    </main>
+</div>
+</body>
+</html>

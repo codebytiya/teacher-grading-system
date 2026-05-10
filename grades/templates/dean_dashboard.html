@@ -1,3 +1,46 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dean Dashboard</title>
-<style>*{box-sizing:border-box}body{margin:0;font-family:'Google Sans',Arial,sans-serif;background:#e7f0eb;color:#1d2d24}.shell{max-width:1180px;margin:0 auto;padding:24px}.top{background:#08783f;color:white;border-radius:12px;padding:24px;text-align:center}.stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}.panel,.stat{background:white;border:1px solid #d8e4dd;border-radius:10px;padding:20px;box-shadow:0 8px 20px rgba(0,0,0,.07)}.stat strong{display:block;font-size:30px;color:#08783f}a{color:white;font-weight:900}table{width:100%;border-collapse:collapse}th,td{padding:12px;border-bottom:1px solid #e5ece8;text-align:left;vertical-align:top}th{background:#f7faf8;color:#52645b}button{border:0;border-radius:7px;background:#08783f;color:white;font-weight:900;padding:8px 12px}.warn{color:#9a4b00;font-weight:900}</style></head>
-<body><main class="shell"><section class="top"><h1>Dean Dashboard</h1><p>Final approval and result publishing</p><a href="{% url 'logout' %}">Sign out</a></section><section class="stats"><div class="stat"><strong>{{ approved_count }}</strong>Awaiting release</div><div class="stat"><strong>{{ final_count }}</strong>Published grades</div></section><section class="panel"><h2>Approve all by course</h2>{% for group in course_groups %}<form method="post" style="display:inline-block;margin:5px">{% csrf_token %}<button name="approve_all_course" value="{{ group.assessmentid__courseid_id }}">Approve all & publish {{ group.assessmentid__courseid__coursecode }} ({{ group.total }})</button></form>{% empty %}<p>No complete HOD-approved course batches yet.</p>{% endfor %}</section><section class="panel"><h2>Final Approval</h2><table><tr><th>Student</th><th>Course</th><th>Score</th><th>HOD Decision</th><th>Caution / AI Reason</th><th>Action</th></tr>{% for grade in approved_grades %}<tr><td>{{ grade.studentid.studentnumber }}</td><td>{{ grade.assessmentid.courseid.coursecode }}</td><td>{{ grade.score }}<br><small>Class avg: {{ grade.class_average|default:"-" }}</small></td><td>Approved by HOD<br><small>{{ grade.hod_comment|default:"No HOD comment" }}</small></td><td>{% if grade.was_flagged %}<span class="warn">Still unusual: review before release.</span><br><small>{{ grade.override_reason|default:"No lecturer reason recorded" }}</small>{% else %}Ready{% endif %}</td><td><form method="post">{% csrf_token %}<button name="finalize" value="{{ grade.gradeid }}">Publish</button></form></td></tr>{% empty %}<tr><td colspan="6">No HOD-approved grades.</td></tr>{% endfor %}</table></section><section class="panel"><h2>Rejected by HOD</h2><table><tr><th>Student</th><th>Course</th><th>Reason</th><th>AI reason</th></tr>{% for grade in rejected_grades %}<tr><td>{{ grade.studentid.studentnumber }}</td><td>{{ grade.assessmentid.courseid.coursecode }}</td><td>{{ grade.hod_comment|default:"Rejected by HOD" }}</td><td>{{ grade.override_reason|default:"-" }}</td></tr>{% empty %}<tr><td colspan="4">No rejected grades.</td></tr>{% endfor %}</table></section></main></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dean Dashboard | ICBM</title>
+    <style>
+        *{box-sizing:border-box}body{margin:0;height:100vh;overflow:hidden;font-family:'Google Sans',Arial,sans-serif;background:#f8fafc;color:#334155}.app{display:grid;grid-template-columns:260px 1fr;height:100vh}.side{background:#1e2a3a;color:#e2e8f0;padding:24px;overflow-y:auto}.brand{font-size:22px;font-weight:800;color:#fff;margin-bottom:28px}.nav a{display:block;color:#e2e8f0;text-decoration:none;padding:12px 14px;border-radius:10px;margin:6px 0}.nav a:hover,.nav a.active{background:#334155}.main{padding:24px;overflow-y:auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.top h1{margin:0;color:#0f172a}.hint{color:#64748b}.stats,.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(2,1fr);margin-bottom:16px}.card,.stat{background:#fff;border-radius:12px;box-shadow:0 4px 6px -1px rgb(0 0 0 / .05);padding:20px;border:1px solid #e2e8f0;overflow:auto}.stat strong{display:block;font-size:34px;color:#3b82f6}.avatar{position:relative}.avatar button{border:0;background:#fff;border-radius:999px;padding:8px 12px;color:#0f172a;box-shadow:0 4px 6px -1px rgb(0 0 0 / .05)}.menu{display:none;position:absolute;right:0;top:44px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;min-width:150px;box-shadow:0 12px 24px rgb(15 23 42 / .12);overflow:hidden}.menu a{display:block;padding:10px 12px;text-decoration:none;color:#334155}.avatar:hover .menu{display:block}table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#f8fafc;color:#0f172a}textarea{width:240px;min-height:72px;border:1px solid #cbd5e1;border-radius:10px;padding:10px;font:inherit}button{border:0;border-radius:10px;background:#3b82f6;color:white;font-weight:800;padding:9px 12px;cursor:pointer}.success{background:#10b981}.danger{background:#ef4444}.warn{background:#fef3c7;border:1px solid #f59e0b;border-radius:10px;padding:8px;color:#92400e}.row{padding:12px 0;border-top:1px solid #e2e8f0}.row:first-child{border-top:0}@media(max-width:900px){.app{display:block}.stats{display:block}.stat{margin-bottom:16px}}
+    </style>
+</head>
+<body>
+<div class="app">
+    <aside class="side"><div class="brand">ICBM</div><nav class="nav"><a class="active" href="{% url 'dean_dashboard' %}">Dashboard</a><a href="{% url 'logout' %}">Logout</a></nav></aside>
+    <main class="main">
+        <div class="top"><div><h1>Dean Dashboard</h1><p class="hint">Final approval and publishing.</p></div><div class="avatar"><button>{{ request.user.username|first|upper }}</button><div class="menu"><a href="#">Profile</a><a href="{% url 'logout' %}">Logout</a></div></div></div>
+        <section class="stats"><div class="stat"><strong>{{ approved_count }}</strong>Awaiting final approval</div><div class="stat"><strong>{{ final_count }}</strong>Published grades</div></section>
+        <section class="card">
+            <h2>Approve All By Course</h2>
+            <form method="post">{% csrf_token %}
+                {% for group in course_groups %}<div class="row"><strong>{{ group.assessmentid__courseid__coursecode }}</strong> - {{ group.total }} HoD-approved grades <button class="success" name="approve_all_course" value="{{ group.assessmentid__courseid_id }}">Approve all & publish</button></div>{% empty %}<p class="hint">No complete HoD-approved course batches yet.</p>{% endfor %}
+            </form>
+        </section>
+        <section class="card" style="margin-top:16px">
+            <h2>Final Approval</h2>
+            <form method="post">{% csrf_token %}
+                <table>
+                    <tr><th>Student</th><th>Course</th><th>Score</th><th>HoD Decision</th><th>Caution / AI Reason</th><th>Dean comment</th><th>Action</th></tr>
+                    {% for grade in approved_grades %}
+                    <tr>
+                        <td>{{ grade.studentid.studentnumber }}</td><td>{{ grade.assessmentid.courseid.coursecode }}</td><td>{{ grade.percentage|default:grade.score }}%</td>
+                        <td>Approved by HoD{% if grade.hod_comment %}<br><small>{{ grade.hod_comment }}</small>{% endif %}</td>
+                        <td>{% if grade.was_flagged %}<div class="warn">{{ grade.flag_override_reason|default:grade.override_reason|default:"Flagged for Dean caution" }}</div>{% else %}<span class="hint">No caution.</span>{% endif %}</td>
+                        <td><textarea name="dean_comment_{{ grade.gradeid }}" placeholder="Required only when declining."></textarea></td>
+                        <td><button class="success" name="finalize" value="{{ grade.gradeid }}">Publish</button><button class="danger" name="decline" value="{{ grade.gradeid }}">Decline</button></td>
+                    </tr>
+                    {% empty %}<tr><td colspan="7">No HoD-approved grades.</td></tr>{% endfor %}
+                </table>
+            </form>
+        </section>
+        <section class="card" style="margin-top:16px">
+            <h2>Returned or Declined</h2>
+            {% for grade in rejected_grades %}<div class="row"><strong>{{ grade.studentid.studentnumber }} - {{ grade.assessmentid.courseid.coursecode }}</strong><br>{{ grade.hod_comment|default:grade.dean_comment }}{% if grade.flag_override_reason %}<br><small>AI reason: {{ grade.flag_override_reason }}</small>{% endif %}</div>{% empty %}<p class="hint">No returned or declined grades.</p>{% endfor %}
+        </section>
+    </main>
+</div>
+</body>
+</html>

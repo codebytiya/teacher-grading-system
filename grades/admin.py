@@ -18,12 +18,13 @@ from .models import (
     Faculty,
     Grade,
     Lecture,
+    Notification,
     Profile,
     Student,
 )
 
-admin.site.site_header = 'MGM College'
-admin.site.site_title = 'MGM College Admin'
+admin.site.site_header = 'ICBM'
+admin.site.site_title = 'ICBM Admin'
 admin.site.index_title = 'Admin Profile'
 
 
@@ -197,9 +198,16 @@ class CourseAssignmentAdmin(admin.ModelAdmin):
 
 @admin.register(Grade)
 class GradeAdmin(admin.ModelAdmin):
-    list_display = ('gradeid', 'studentid', 'assessmentid', 'score', 'lettergrade', 'status', 'was_flagged')
-    list_filter = ('status', 'was_flagged')
+    list_display = ('gradeid', 'studentid', 'assessmentid', 'percentage', 'letter_grade', 'status', 'flagged')
+    list_filter = ('status', 'flagged')
     search_fields = ('studentid__firstname', 'studentid__lastname', 'assessmentid__assessmentname')
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('recipient', 'sender', 'notification_type', 'read', 'created_at')
+    list_filter = ('notification_type', 'read')
+    search_fields = ('recipient__username', 'sender__username', 'message')
 
 
 @admin.register(Course)
@@ -235,4 +243,8 @@ class CourseAdmin(admin.ModelAdmin):
 admin.site.register(Faculty)
 admin.site.register(Department)
 admin.site.register(Enrollment)
-admin.site.register(Assessment)
+@admin.register(Assessment)
+class AssessmentAdmin(admin.ModelAdmin):
+    list_display = ('assessmentname', 'courseid', 'assessmenttype', 'duedate', 'submission_deadline')
+    list_filter = ('assessmenttype', 'duedate')
+    search_fields = ('assessmentname', 'courseid__coursecode', 'courseid__coursename')

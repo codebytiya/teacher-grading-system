@@ -109,6 +109,7 @@ class Assessment(models.Model):
     maxscore = models.DecimalField(db_column='MaxScore', max_digits=5, decimal_places=2)
     weight = models.DecimalField(db_column='Weight', max_digits=5, decimal_places=2, blank=True, null=True)
     duedate = models.DateField(db_column='DueDate')
+    submission_deadline = models.DateTimeField(db_column='SubmissionDeadline', blank=True, null=True)
 
     def __str__(self):
         return f"{self.assessmentname} - {self.courseid.coursecode}"
@@ -118,26 +119,35 @@ class Assessment(models.Model):
 
 # ========== GRADE ==========
 class Grade(models.Model):
+    STATUS_CHOICES = [
+        ('draft', 'Draft'),
+        ('submitted', 'Submitted to HoD'),
+        ('approved_by_hod', 'Approved by HoD'),
+        ('returned', 'Returned to Lecturer'),
+        ('approved', 'Published (Final)'),
+        ('final_approved', 'Final Approved'),
+        ('declined', 'Declined by Dean'),
+    ]
     gradeid = models.AutoField(db_column='GradeID', primary_key=True)
     studentid = models.ForeignKey(Student, models.DO_NOTHING, db_column='StudentID')
     assessmentid = models.ForeignKey(Assessment, models.DO_NOTHING, db_column='AssessmentID')
     score = models.DecimalField(db_column='Score', max_digits=5, decimal_places=2, blank=True, null=True)
     lettergrade = models.CharField(db_column='LetterGrade', max_length=2, blank=True, null=True)
+    percentage = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    letter_grade = models.CharField(max_length=2, blank=True, null=True)
+    gpa = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
     submissiondate = models.DateTimeField(db_column='SubmissionDate', blank=True, null=True)
     override_reason = models.TextField(blank=True, null=True)
     was_flagged = models.BooleanField(default=False)
+    flagged = models.BooleanField(default=False)
+    flag_reasons = models.JSONField(default=list, blank=True)
+    flag_override_reason = models.TextField(blank=True)
     flagged_by = models.CharField(max_length=50, blank=True, null=True)
     flagged_value = models.FloatField(blank=True, null=True)
     class_average = models.FloatField(blank=True, null=True)
     hod_comment = models.TextField(blank=True, null=True)
-    # New status field for workflow
-    status = models.CharField(max_length=20, default='draft', choices=[
-        ('draft', 'Draft'),
-        ('submitted', 'Submitted'),
-        ('approved', 'Approved by HOD'),
-        ('rejected', 'Rejected by HOD'),
-        ('final', 'Final Approved'),
-    ])
+    dean_comment = models.TextField(blank=True)
+    status = models.CharField(max_length=20, default='draft', choices=STATUS_CHOICES)
 
     def __str__(self):
         return f"{self.studentid.firstname} {self.studentid.lastname} - {self.assessmentid.assessmentname}: {self.score}"
@@ -153,12 +163,30 @@ class CourseAssignment(models.Model):
     semesterid = models.IntegerField(db_column='SemesterID')
     portal_is_open = models.BooleanField(default=True)
     portal_updated_at = models.DateTimeField(blank=True, null=True)
+    portal_close_date = models.DateTimeField(blank=True, null=True)
+    is_grading_complete = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.courseid.coursecode} - {self.lecturerid.firstname} {self.lecturerid.lastname}"
 
     class Meta:
         db_table = 'course_assignment'
+
+
+class Notification(models.Model):
+    sender = models.ForeignKey(User, related_name='sent_notifications', on_delete=models.CASCADE)
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    notification_type = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f'{self.notification_type} for {self.recipient.username}'
+
+    class Meta:
+        db_table = 'grade_notification'
+        ordering = ['-created_at']
 
 # ========== PROFILE (for roles) ==========
 class Profile(models.Model):

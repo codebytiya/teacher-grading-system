@@ -3,62 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lecturer Dashboard</title>
+    <title>Lecturer Dashboard | ICBM</title>
     <style>
-        * { box-sizing: border-box; } body { margin: 0; font-family: 'Google Sans', Arial, sans-serif; background: #e7f0eb; color: #1d2d24; }
-        .shell { max-width: 1180px; margin: 0 auto; padding: 24px; } .top { background:#08783f; color:#fff; border-radius:12px; padding:24px; text-align:center; box-shadow:0 12px 28px rgba(0,0,0,.12); }
-        h1,h2,p { margin-top:0; } .muted { color:#60736a; } .top .muted { color:#d8f2e4; }
-        .actions { margin-top:16px; } a.btn { display:inline-block; margin:5px; padding:10px 14px; border-radius:7px; text-decoration:none; font-weight:900; background:#08783f; color:#fff; } a.btn.light { background:#fff; color:#08783f; }
-        .stats,.grid { display:grid; gap:16px; } .stats { grid-template-columns:repeat(3,1fr); margin:20px 0; } .grid { grid-template-columns:1fr 1fr; align-items:start; }
-        .panel,.stat { background:#fff; border:1px solid #d8e4dd; border-radius:10px; padding:20px; box-shadow:0 8px 20px rgba(0,0,0,.07); }
-        .stat strong { display:block; font-size:30px; color:#08783f; } .course,.row { padding:12px 0; border-top:1px solid #e5ece8; } .course:first-child,.row:first-child { border-top:0; }
-        .tag { display:inline-block; padding:4px 9px; border-radius:999px; font-size:12px; font-weight:900; background:#e8f5ee; color:#08783f; } .tag.red { background:#ffe7e7; color:#9c2525; }.mark{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;font-weight:900}.yes{background:#e8f5ee;color:#08783f}.no{background:#ffe7e7;color:#9c2525}.wait{background:#fff7df;color:#9a4b00}
-        table { width:100%; border-collapse:collapse; background:#fff; } th,td { padding:11px; border-bottom:1px solid #e5ece8; text-align:left; font-size:14px; } th { background:#f7faf8; color:#52645b; }
-        @media(max-width:850px){.stats,.grid{display:block}.panel,.stat{margin-bottom:14px}}
+        *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:'Google Sans',Arial,sans-serif;background:#f8fafc;color:#334155}.app{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100vh}.side{background:#1e2a3a;color:#e2e8f0;padding:24px;height:max-content;position:sticky;top:0;border-radius:0 0 12px 0}.brand{font-size:24px;font-weight:800;color:#fff;margin-bottom:24px}.nav{display:grid;gap:6px}.nav a{display:block;color:#e2e8f0;text-decoration:none;padding:12px 14px;border-radius:8px}.nav a:hover,.nav a.active{background:#334155}.main{padding:28px;overflow-y:auto}.top{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:24px}.top h1{margin:0;color:#0f172a;font-size:36px}.hint{color:#64748b}.avatar{position:relative}.avatar button{border:0;background:#fff;border-radius:8px;padding:10px 14px;color:#0f172a;box-shadow:0 4px 6px -1px rgb(0 0 0 / .05);cursor:pointer}.menu{display:none;position:absolute;right:0;top:46px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;min-width:150px;box-shadow:0 12px 24px rgb(15 23 42 / .12);overflow:hidden;z-index:4}.menu a{display:block;padding:10px 12px;text-decoration:none;color:#334155}.menu a:hover{background:#f8fafc}.avatar:hover .menu{display:block}.stats,.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:18px}.grid{grid-template-columns:1fr}.card,.stat{background:#fff;border-radius:12px;box-shadow:0 4px 6px -1px rgb(0 0 0 / .05);padding:22px;border:1px solid #e2e8f0}.stat strong{display:block;font-size:34px;color:#3b82f6}.btn{display:inline-block;border:0;border-radius:8px;background:#3b82f6;color:#fff;font-weight:800;padding:10px 14px;text-decoration:none;cursor:pointer}.btn:hover{background:#2563eb}.btn.success{background:#10b981}.row{padding:15px 0;border-top:1px solid #e2e8f0}.row:first-child{border-top:0}.tag{display:inline-block;padding:5px 9px;border-radius:6px;font-size:12px;font-weight:800;background:#e0f2fe;color:#0369a1}.tag.ok{background:#d1fae5;color:#047857}.tag.warn{background:#fef3c7;color:#92400e}.table-wrap{overflow:auto}table{width:100%;min-width:980px;border-collapse:collapse}th,td{padding:12px 10px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#f8fafc;color:#0f172a}.date-cell{min-width:136px;white-space:nowrap}.submitted-cell{min-width:190px;white-space:nowrap}.stamp{display:block;margin-top:4px;color:#64748b;font-size:12px}.progress{display:grid;grid-template-columns:repeat(4,58px);gap:8px;margin-top:4px}.step{text-align:center;font-size:11px;color:#64748b}.mark{display:block;width:16px;height:16px;border-radius:4px;margin:0 auto 5px;background:#cbd5e1}.mark.filled{background:#10b981}.mark.current{background:#3b82f6}.comment{display:block;margin-top:8px;color:#334155;max-width:360px}@media(max-width:980px){.app{display:block}.side{position:relative;width:max-content;max-width:100%;border-radius:0 0 12px 0}.stats,.grid{display:block}.card,.stat{margin-bottom:16px}.main{padding:20px}.top{align-items:flex-start}.top h1{font-size:30px}}@media(max-width:620px){.side{width:100%;border-radius:0}.stats{display:grid;grid-template-columns:1fr}.top{display:block}.avatar{margin-top:12px}.nav{grid-template-columns:1fr 1fr}.nav a{font-size:14px}}
     </style>
 </head>
 <body>
-<main class="shell">
-    <section class="top">
-        <h1>{{ lecturer.firstname }} {{ lecturer.lastname }}</h1>
-        <p class="muted">{{ lecturer.email }} | {{ lecturer_department }}</p>
-        <div class="actions">
-            <a class="btn light" href="{% url 'lecturer_enter_grades' %}">Enter grades</a>
-            <a class="btn light" href="{% url 'lecturer_view_grades' %}">View submissions</a>
-            <a class="btn light" href="{% url 'logout' %}">Sign out</a>
+<div class="app">
+    <aside class="side">
+        <div class="brand">ICBM</div>
+        <nav class="nav">
+            <a class="active" href="{% url 'lecturer_dashboard' %}">Dashboard</a>
+            <a href="{% url 'lecturer_enter_grades' %}">Enter grades</a>
+            <a href="{% url 'lecturer_view_grades' %}">View submissions</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </nav>
+    </aside>
+    <main class="main">
+        <div class="top">
+            <div>
+                <h1>{{ lecturer.firstname }} {{ lecturer.lastname }}</h1>
+                <p class="hint">{{ lecturer.email }} | {{ lecturer_department }}</p>
+            </div>
+            <div class="avatar">
+                <button>{{ request.user.first_name|first|default:request.user.username|first|upper }} {{ request.user.last_name|first|upper }}</button>
+                <div class="menu"><a href="#">Profile</a><a href="{% url 'logout' %}">Logout</a></div>
+            </div>
         </div>
-    </section>
-    <section class="stats">
-        <div class="stat"><strong>{{ submitted_count }}</strong><span class="muted">Awaiting HOD</span></div>
-        <div class="stat"><strong>{{ approved_count }}</strong><span class="muted">Approved/released</span></div>
-        <div class="stat"><strong>{{ rejected_count }}</strong><span class="muted">Returned</span></div>
-    </section>
-    <section class="grid">
-        <div class="panel">
-            <h2>Assigned Courses</h2>
-            {% for assignment in assigned_courses %}
-                <div class="course">
+
+        <section class="stats">
+            <div class="stat"><strong>{{ submitted_count }}</strong><span>Awaiting HoD</span></div>
+            <div class="stat"><strong>{{ approved_count }}</strong><span>Approved or final approved</span></div>
+            <div class="stat"><strong>{{ rejected_count }}</strong><span>Returned or declined</span></div>
+        </section>
+
+        <section class="grid">
+            <div class="card">
+                <h2>Assigned Courses</h2>
+                {% for assignment in assigned_courses %}
+                <div class="row">
                     <strong>{{ assignment.courseid.coursecode }} - {{ assignment.courseid.coursename }}</strong><br>
-                    {% if assignment.portal_is_open %}<span class="tag">Portal open</span>{% else %}<span class="tag red">Portal closed</span>{% endif %}
+                    {% if assignment.is_grading_complete %}<span class="tag warn">Finalized</span>{% else %}<span class="tag ok">Open for entry</span>{% endif %}
+                    {% if not assignment.is_grading_complete %}
+                    <form method="post" action="{% url 'lecturer_finalize_course' assignment.assignmentid %}" style="display:inline">
+                        {% csrf_token %}
+                        <button class="btn success" type="submit">Finalize Grades</button>
+                    </form>
+                    {% endif %}
                 </div>
-            {% empty %}<p class="muted">No courses assigned yet.</p>{% endfor %}
-        </div>
-        <div class="panel">
-            <h2>Approval Progress</h2>
-            <table>
-                <tr><th>Student</th><th>Course</th><th>Score</th><th>HOD</th><th>Dean</th></tr>
-                {% for grade in grades %}
-                    <tr>
-                        <td>{{ grade.studentid.studentnumber }}</td>
-                        <td>{{ grade.assessmentid.courseid.coursecode }}</td>
-                        <td>{{ grade.score }}</td>
-                        <td>{% if grade.status == 'rejected' %}<span class="mark no">x</span>{% elif grade.status == 'approved' or grade.status == 'final' %}<span class="mark yes">✓</span>{% else %}<span class="mark wait">…</span>{% endif %}</td>
-                        <td>{% if grade.status == 'final' %}<span class="mark yes">✓</span>{% elif grade.status == 'rejected' %}<span class="mark no">x</span>{% else %}<span class="mark wait">…</span>{% endif %}</td>
-                    </tr>
-                {% empty %}<tr><td colspan="5">No submissions yet.</td></tr>{% endfor %}
-            </table>
-        </div>
-    </section>
-</main>
+                {% empty %}
+                <p class="hint">No courses assigned yet.</p>
+                {% endfor %}
+
+                <h2>Notifications</h2>
+                {% for notification in notifications %}
+                <div class="row">{{ notification.message }}<br><small class="hint">{{ notification.created_at|date:"Y-m-d H:i" }}</small></div>
+                {% empty %}
+                <p class="hint">No notifications yet.</p>
+                {% endfor %}
+            </div>
+
+            <div class="card">
+                <h2>Approval Progress</h2>
+                <div class="table-wrap">
+                    <table>
+                        <tr>
+                            <th>Student</th>
+                            <th>Course</th>
+                            <th>Score</th>
+                            <th>Deadline</th>
+                            <th>Submitted stamp</th>
+                            <th>Progress</th>
+                        </tr>
+                        {% for grade in grades %}
+                        <tr>
+                            <td>{{ grade.studentid.studentnumber }}</td>
+                            <td>{{ grade.assessmentid.courseid.coursecode }}</td>
+                            <td>{{ grade.percentage|default:grade.score }}</td>
+                            <td class="date-cell">
+                                {% if grade.assessmentid.submission_deadline %}
+                                    {{ grade.assessmentid.submission_deadline|date:"Y-m-d H:i" }}
+                                {% else %}
+                                    {{ grade.assessmentid.duedate|date:"Y-m-d" }} 23:59
+                                {% endif %}
+                            </td>
+                            <td class="submitted-cell">{% if grade.submissiondate %}Submitted on: {{ grade.submissiondate|date:"Y-m-d H:i" }}{% else %}<span class="hint">Not submitted</span>{% endif %}</td>
+                            <td>
+                                <div class="progress">
+                                    <div class="step"><span class="mark {% if grade.status != 'draft' %}filled{% endif %}"></span>Submitted</div>
+                                    <div class="step"><span class="mark {% if grade.status == 'submitted' %}current{% elif grade.status == 'approved_by_hod' or grade.status == 'approved' or grade.status == 'final_approved' %}filled{% endif %}"></span>HoD</div>
+                                    <div class="step"><span class="mark {% if grade.status == 'approved_by_hod' %}current{% elif grade.status == 'approved' or grade.status == 'final_approved' %}filled{% endif %}"></span>Dean</div>
+                                    <div class="step"><span class="mark {% if grade.status == 'approved' or grade.status == 'final_approved' %}filled{% endif %}"></span>Final</div>
+                                </div>
+                                {% if grade.hod_comment %}<small class="comment">HoD: {{ grade.hod_comment }}</small>{% endif %}
+                                {% if grade.dean_comment %}<small class="comment">Dean: {{ grade.dean_comment }}</small>{% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="6">No submissions yet.</td></tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
 </body>
 </html>
